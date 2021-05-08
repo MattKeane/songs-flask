@@ -1,7 +1,10 @@
 # modules
 from flask import Flask
+from dotenv import load_dotenv
+import os
 
-PORT = 8000
+load_dotenv()
+PORT = os.environ.get('PORT')
 DEBUG = True
 
 app = Flask(__name__)
