@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify
 from playhouse.shortcuts import model_to_dict
-import peewee
 
 import models
 
@@ -34,7 +33,7 @@ def get_artist(id):
 			data=artist_dict,
 			message='Artist returned.',
 			status=200), 200
-	except peewee.DoesNotExist:
+	except models.DoesNotExist:
 		return jsonify(
 			data={},
 			message='Error fetching artist',
@@ -54,7 +53,7 @@ def update_artist(id):
 			data=artist_dict,
 			message='Succesfully updated artist.',
 			status=200), 200
-	except peewee.DoesNotExist:
+	except models.DoesNotExist:
 		return jsonify(
 			data={},
 			message='Artist does not exist.',
@@ -68,7 +67,7 @@ def delete_artist(id):
 		return jsonify(
 			message='Artist successfully deleted',
 			status=200), 200
-	except peewee.DoesNotExist:
+	except models.DoesNotExist:
 		return jsonify(
 			message='Artist does not exist',
 			status=400), 400
