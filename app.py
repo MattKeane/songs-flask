@@ -2,15 +2,30 @@
 from flask import Flask
 from dotenv import load_dotenv
 import os
+from flask_login import LoginManager
 
 import models
 
 load_dotenv()
 PORT = os.environ.get('PORT')
+SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = True
 
 app = Flask(__name__)
 
+# Setting up sessions
+app.secret_key = SECRET_KEY
+login_manager = LoginManager()
+login_manager.init_app(app)
+@login_manager.user_loader
+def load_user(user_id):
+	try:
+		user = models.User.get_by_id(user_id)
+		return user
+	except models.DoesNotExist:
+		return None
+
+# Registering Blueprints
 from resources.artists import artists
 from resources.auth import auth
 app.register_blueprint(artists, url_prefix='/api/v1/artists')

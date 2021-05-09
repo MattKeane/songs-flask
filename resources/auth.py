@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from playhouse.shortcuts import model_to_dict
 from flask_bcrypt import generate_password_hash
+from flask_login import login_user
 
 import models
 
@@ -23,6 +24,7 @@ def register_user():
 		except models.DoesNotExist:
 			payload['password'] = generate_password_hash(payload['password'])
 			created_user = models.User.create(**payload)
+			login_user(created_user)
 			user_dict = model_to_dict(created_user)
 			user_dict.pop('password')
 			return jsonify(
