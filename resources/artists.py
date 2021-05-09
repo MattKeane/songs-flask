@@ -59,3 +59,16 @@ def update_artist(id):
 			data={},
 			message='Artist does not exist.',
 			status=400), 400
+
+@artists.route('/<id>', methods=['DELETE'])
+def delete_artist(id):
+	try:
+		artist_to_delete = models.Artist.get_by_id(id)
+		artist_to_delete.delete_instance()
+		return jsonify(
+			message='Artist successfully deleted',
+			status=200), 200
+	except peewee.DoesNotExist:
+		return jsonify(
+			message='Artist does not exist',
+			status=400), 400
