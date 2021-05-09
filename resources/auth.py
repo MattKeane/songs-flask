@@ -1,12 +1,37 @@
 from flask import Blueprint, request, jsonify
 from playhouse.shortcuts import model_to_dict
-from flask_bcrypt import generate_password_hash
+from flask_bcrypt import generate_password_hash, check_password_hash
 from flask_login import login_user
 
 import models
 
 auth = Blueprint('auth', 'auth')
 
+# user login route
+@auth.route('/login', methods=['POST'])
+def user_login():
+	payload = request.get_json()
+	try:
+		user_to_login = models.User.get(models.User.email == payload['email'])
+		user_dict = model_to_dict(user_to_login)
+		password_is_correct = check_password_hash(user_dict['password'], payload['password'])
+		if password_is_correct:
+			login_user(user_to_login)
+			user_dict.pop('password')
+			return jsonify(
+				data=user_dict,
+				message='User succesfully logged in',
+				status=200), 200
+		else:
+			return jsonify(
+				message='Invalid email or password',
+				status=401), 401
+	except models.DoesNotExist:
+		return jsonify(
+			message='Invalid email or password',
+			status=401), 401		
+
+# user registration route
 @auth.route('/register', methods=['POST'])
 def register_user():
 	payload = request.get_json()
