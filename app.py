@@ -1,5 +1,5 @@
 # modules
-from flask import Flask
+from flask import Flask, jsonify
 from dotenv import load_dotenv
 import os
 from flask_login import LoginManager
@@ -17,6 +17,15 @@ app = Flask(__name__)
 app.secret_key = SECRET_KEY
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+def handle_unauthorized():
+	return jsonify(
+		data={},
+		message='You must be logged in to do that!',
+		status=401), 401
+
+login_manager.unauthorized_handler(handle_unauthorized)
+
 @login_manager.user_loader
 def load_user(user_id):
 	try:

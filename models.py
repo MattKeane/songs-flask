@@ -15,6 +15,7 @@ class Artist(Model):
 	name = CharField()
 	born = IntegerField()
 	still_alive = BooleanField()
+	added_by = ForeignKeyField(User, backref='artists')
 
 	class Meta:
 		database = DATABASE
@@ -22,7 +23,8 @@ class Artist(Model):
 class Song(Model):
 	title = CharField()
 	released = IntegerField()
-	artist = ForeignKeyField(User, backref='songs')
+	artist = ForeignKeyField(Artist, backref='songs')
+	added_by = ForeignKeyField(User, backref='songs')
 
 	class Meta:
 		database = DATABASE

@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from playhouse.shortcuts import model_to_dict
+from flask_login import current_user, login_required
 
 import models
 
@@ -15,8 +16,10 @@ def get_all_artists():
 		status=200), 200
 
 @artists.route('/', methods=['POST'])
+@login_required
 def create_new_artist():
 	payload = request.get_json()
+	payload['added_by'] = current_user
 	new_artist = models.Artist.create(**payload)
 	new_artist_dict = model_to_dict(new_artist)
 	return jsonify(
