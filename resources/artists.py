@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from playhouse.shortcuts import model_to_dict
+import peewee
 
 import models
 
@@ -23,3 +24,18 @@ def create_new_artist():
 		data=new_artist_dict,
 		message='Artist succesfully created',
 		status=201), 201
+
+@artists.route('/<id>', methods=['GET'])
+def get_artist(id):
+	try:
+		found_artist = models.Artist.get_by_id(id)
+		artist_dict = model_to_dict(found_artist)
+		return jsonify(
+			data=artist_dict,
+			message='Artist returned.',
+			status=200), 200
+	except peewee.DoesNotExist:
+		return jsonify(
+			data={},
+			message='Error fetching artist',
+			status=400), 400
