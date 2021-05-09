@@ -39,3 +39,23 @@ def get_artist(id):
 			data={},
 			message='Error fetching artist',
 			status=400), 400
+
+@artists.route('/<id>', methods=['PUT'])
+def update_artist(id):
+	payload = request.get_json()
+	try:
+		(models.Artist
+			.update(**payload)
+			.where(models.Artist.id == id)
+			.execute())
+		updated_artist = models.Artist.get_by_id(id)
+		artist_dict = model_to_dict(updated_artist)
+		return jsonify(
+			data=artist_dict,
+			message='Succesfully updated artist.',
+			status=200), 200
+	except peewee.DoesNotExist:
+		return jsonify(
+			data={},
+			message='Artist does not exist.',
+			status=400), 400
