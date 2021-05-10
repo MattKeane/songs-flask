@@ -60,3 +60,22 @@ def update_song(id):
             data={},
             message='Song does not exist',
             status=400), 400
+
+@songs.route('<id>', methods=['DELETE'])
+@login_required
+def delete_song(id):
+    try:
+        song_to_delete = models.Song.get_by_id(id)
+        if song_to_delete.added_by.id == current_user.id:
+            song_to_delete.delete_instance()
+            return jsonify(
+                message='Song successfully deleted',
+                status=200), 200
+        else:
+            return jsonify(
+                message='You are not authorized to do that',
+                status=401), 401
+    except models.DoesNotExist:
+        return jsonify(
+            message='Song does not exist',
+            status=400), 400
