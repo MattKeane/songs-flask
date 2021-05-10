@@ -33,3 +33,30 @@ def get_all_songs():
         data=song_dicts,
         message=f'Returned {len(song_dicts)} songs',
         status=200), 200
+
+@songs.route('/<id>', methods=['PUT'])
+@login_required
+def update_song(id):
+    payload = request.get_json()
+    try:
+        song_to_update = models.Song.get_by_id(id)
+        if song_to_update.added_by.id == current_user.id:
+            song_to_update.update(**payload)
+            updated_song = models.Song.get_by_id(id)
+            song_dict = model_to_dict(updated_song)
+            song_dict['artist'].pop('added_by')
+            song_dict['added_by'].pop('password')
+            return jsonify(
+                data=song_dict,
+                message='Song successfully updated',
+                status=200), 200
+        else:
+            return jsonify(
+                data={},
+                message='You are not authorized to do that',
+                status=401), 401
+    except models.DoesNotExist:
+        return jsonify(
+            data={},
+            message='Song does not exist',
+            status=400), 400
