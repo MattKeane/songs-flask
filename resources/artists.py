@@ -19,9 +19,10 @@ def get_all_artists():
 @login_required
 def create_new_artist():
 	payload = request.get_json()
-	payload['added_by'] = current_user
+	payload['added_by'] = current_user.id
 	new_artist = models.Artist.create(**payload)
 	new_artist_dict = model_to_dict(new_artist)
+	new_artist_dict['added_by'].pop('password')
 	return jsonify(
 		data=new_artist_dict,
 		message='Artist succesfully created',
@@ -43,6 +44,7 @@ def get_artist(id):
 			status=400), 400
 
 @artists.route('/<id>', methods=['PUT'])
+@login_required
 def update_artist(id):
 	payload = request.get_json()
 	try:
