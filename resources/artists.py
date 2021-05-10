@@ -52,12 +52,23 @@ def get_artist(id):
 def update_artist(id):
 	payload = request.get_json()
 	try:
-		(models.Artist
-			.update(**payload)
-			.where(models.Artist.id == id)
-			.execute())
-		updated_artist = models.Artist.get_by_id(id)
-		artist_dict = model_to_dict(updated_artist)
+		artist_to_update = models.Artist.get_by_id(id)
+		if artist_to_update.added_by.id == current_user.id:
+			(artist_to_update
+				.update(**payload)
+				.execute())
+			updated_artist = models.Artist.get_by_id(id)
+			artist_dict = model_to_dict(updated_artist)
+			artist_dict['added_by'].pop('password')
+			return jsonify(
+				data=artist_dict,
+				message='Successfully updated artist.',
+				status=200), 200
+		else:
+			return jsonify(
+				data={},
+				message='You are not authorized to do that',
+				status=401), 401
 		return jsonify(
 			data=artist_dict,
 			message='Succesfully updated artist.',
