@@ -37,8 +37,10 @@ def load_user(user_id):
 # Registering Blueprints
 from resources.artists import artists
 from resources.auth import auth
+from resources.songs import songs
 app.register_blueprint(artists, url_prefix='/api/v1/artists')
 app.register_blueprint(auth, url_prefix='/api/v1/auth')
+app.register_blueprint(songs, url_prefix='/api/v1/songs')
 
 @app.route('/')
 def test():
