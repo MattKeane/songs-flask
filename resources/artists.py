@@ -9,7 +9,11 @@ artists = Blueprint('artists', 'artists')
 @artists.route('/', methods=['GET'])
 def get_all_artists():
 	all_artists = models.Artist.select()
-	artist_dicts = [model_to_dict(artist) for artist in all_artists]
+	artist_dicts = []
+	for artist_entry in all_artists:
+		artist_dict = model_to_dict(artist_entry)
+		artist_dict['added_by'].pop('password')
+		artist_dicts.append(artist_dict)
 	return jsonify(
 		data=artist_dicts,
 		message=f'Returned {len(artist_dicts)} artists.',
