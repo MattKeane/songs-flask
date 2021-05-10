@@ -80,13 +80,19 @@ def update_artist(id):
 			status=400), 400
 
 @artists.route('/<id>', methods=['DELETE'])
+@login_required
 def delete_artist(id):
 	try:
 		artist_to_delete = models.Artist.get_by_id(id)
-		artist_to_delete.delete_instance()
-		return jsonify(
-			message='Artist successfully deleted',
-			status=200), 200
+		if artist_to_delete.added_by.id == current_user.id:
+			artist_to_delete.delete_instance()
+			return jsonify(
+				message='Artist successfully deleted',
+				status=200), 200
+		else:
+			return jsonify(
+				message='You are not authorized to do that',
+				status=401), 401
 	except models.DoesNotExist:
 		return jsonify(
 			message='Artist does not exist',
