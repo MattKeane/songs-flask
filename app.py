@@ -3,6 +3,7 @@ from flask import Flask, jsonify
 from dotenv import load_dotenv
 import os
 from flask_login import LoginManager
+from flask_cors import CORS
 
 import models
 
@@ -38,6 +39,11 @@ def load_user(user_id):
 from resources.artists import artists
 from resources.auth import auth
 from resources.songs import songs
+
+CORS(artists, origins=['http://localhost:4200'])
+CORS(auth, origins=['http://localhost:4200'])
+CORS(songs, origins=['http://localhost:4200'])
+
 app.register_blueprint(artists, url_prefix='/api/v1/artists')
 app.register_blueprint(auth, url_prefix='/api/v1/auth')
 app.register_blueprint(songs, url_prefix='/api/v1/songs')
