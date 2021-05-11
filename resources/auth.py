@@ -20,7 +20,7 @@ def user_login():
 			user_dict.pop('password')
 			return jsonify(
 				data=user_dict,
-				message='User succesfully logged in',
+				message='User successfully logged in',
 				status=200), 200
 		else:
 			return jsonify(
@@ -54,7 +54,7 @@ def register_user():
 			user_dict.pop('password')
 			return jsonify(
 				data=user_dict,
-				message='User succesfully created',
+				message='User successfully created',
 				status=201), 201
 
 # get current user
